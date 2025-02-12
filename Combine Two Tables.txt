@@ -25,8 +25,7 @@ addressId is the primary key (column with unique values) for this table.
 Each row of this table contains information about the city and state of one person with ID = PersonId.
  
 
-Write a solution to report the first name, last name, city, and state of each person in the Person table. If the 
-address of a personId is not present in the Address table, report null instead.
+Write a solution to report the first name, last name, city, and state of each person in the Person table. If the address of a personId is not present in the Address table, report null instead.
 
 Return the result table in any order.
 
@@ -62,10 +61,17 @@ Explanation:
 There is no address in the address table for the personId = 1 so we return null in their city and state.
 addressId = 1 contains information about the address of personId = 2.
 
-
 Solution:
 
-SELECT p.firstName as firstName, p.lastName as lastName, a.city as city, a.state as state
-FROM Person p
-LEFT JOIN Address a
+Pandas
+
+def combine_two_tables(person: pd.DataFrame, address: pd.DataFrame) -> pd.DataFrame:
+    result = pd.merge(person,address, on='personId',how='left')
+    return result[['firstName','lastName','city','state']]
+
+MYSQL
+
+SELCT p.firstName, p.lastName, a.city, a.state
+FROM person p
+LEFT JOIN address a
 ON p.personId = a.personId

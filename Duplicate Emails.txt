@@ -1,0 +1,73 @@
+Table: Person
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| email       | varchar |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table contains an email. The emails will not contain uppercase letters.
+ 
+
+Write a solution to report all the duplicate emails. Note that it's guaranteed that the email field is not NULL.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Person table:
++----+---------+
+| id | email   |
++----+---------+
+| 1  | a@b.com |
+| 2  | c@d.com |
+| 3  | a@b.com |
++----+---------+
+Output: 
++---------+
+| Email   |
++---------+
+| a@b.com |
++---------+
+Explanation: a@b.com is repeated two times.
+
+Solution:
+
+MySQL
+
+SELECT Email 
+FROM Person
+GROUP BY email
+HAVING count(email) > 1
+
+Pandas
+
+def duplicate_emails(person: pd.DataFrame) -> pd.DataFrame:
+  email_counts = person.groupby('email').size().reset_index(name='count')
+
+  result = email_counts[email_counts['count'] > 1]
+
+  return result[['email']].rename(columns = {'email':'Email'}).reset_index(drop = True)  
+
+Explanation:
+
+groupby('email'): Groups the rows by the email column.
+size(): Counts the number of occurrences for each email.
+reset_index(name='count'): Converts the result to a DataFrame with a new column count.
+email_counts[email_counts['count'] > 1]: Filters the rows where the count is greater than 1 (i.e., duplicate emails).
+rename(columns={'email': 'Email'}): Renames the column to match the required output.
+
+What does reset_index(drop=True) do in Pandas?
+reset_index() is used to reset the index of a DataFrame, returning a new index starting from 0. When you pass drop=True, it removes 
+the old index rather than adding it as a new column in the DataFrame.
+
+Why use reset_index(drop=True)?
+In many cases, after filtering or grouping, the index may be non-sequential or non-meaningful. Using reset_index(drop=True) ensures 
+the DataFrame has a clean, sequential index.
+

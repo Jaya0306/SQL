@@ -1,0 +1,69 @@
+Table: Employee
+
++-------------+---------+
+| Column Name | Type    |
++-------------+---------+
+| id          | int     |
+| name        | varchar |
+| salary      | int     |
+| managerId   | int     |
++-------------+---------+
+id is the primary key (column with unique values) for this table.
+Each row of this table indicates the ID of an employee, their name, salary, and the ID of their manager.
+ 
+
+Write a solution to find the employees who earn more than their managers.
+
+Return the result table in any order.
+
+The result format is in the following example.
+
+ 
+
+Example 1:
+
+Input: 
+Employee table:
++----+-------+--------+-----------+
+| id | name  | salary | managerId |
++----+-------+--------+-----------+
+| 1  | Joe   | 70000  | 3         |
+| 2  | Henry | 80000  | 4         |
+| 3  | Sam   | 60000  | Null      |
+| 4  | Max   | 90000  | Null      |
++----+-------+--------+-----------+
+Output: 
++----------+
+| Employee |
++----------+
+| Joe      |
++----------+
+Explanation: Joe is the only employee who earns more than his manager.
+
+Solution:
+
+MySQL
+
+SELECT emp.name as Employee
+FROM employee emp
+JOIN employee man
+ON man.id = emp.managerId
+WHERE emp.salary > man.salary
+
+Pandas
+
+def employees_earning_more_than_managers(employee: pd.DataFrame) -> pd.DataFrame:
+    # Perform a self-join on managerId (employee) and id (manager)
+    merged = pd.merge(employee, employee, left_on='managerId', right_on='id', suffixes=('', '_manager'))
+    
+    # Filter where employee's salary is greater than their manager's salary
+    result = merged[merged['salary'] > merged['salary_manager']]
+    
+    # Return the result with only the employee names
+    return result[['name']].rename(columns={'name': 'Employee'}).reset_index(drop=True)
+
+Explanation:
+Self-Join (pd.merge): Join employee with itself:
+
+left_on='managerId' → Use the managerId from the left table.
+right_on='id' → Match it with the id of the right table (manager).
