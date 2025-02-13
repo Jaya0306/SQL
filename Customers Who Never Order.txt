@@ -60,5 +60,13 @@ Output:
 
 Solution:
 
+MySQL
+
+SELECT name as Customers
+FROM customers
+WHERE id NOT IN (SELECT customerId FROM orders)
+
+Pandas
+
 def customers_who_never_ordered(customers: pd.DataFrame, orders: pd.DataFrame) -> pd.DataFrame:
     return customers[~customers["id"].isin(orders["customerId"])][["name"]].rename(columns={"name": "Customers"})

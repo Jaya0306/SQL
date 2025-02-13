@@ -45,6 +45,28 @@ Explanation: john@example.com is repeated two times. We keep the row with the sm
 
 Solution:
 
+MySQL
+
+DELETE P1 
+FROM Person P1
+JOIN Person P2 
+ON P1.email = P2.email AND P1.id > P2.id;
+
+Pandas
+
 def delete_duplicate_emails(person: pd.DataFrame) -> None:
     person.sort_values(by='id', inplace=True)  # Sort by id to keep the smallest one
     person.drop_duplicates(subset='email', keep='first', inplace=True)  # Remove duplicates in place
+
+DELETE FROM Person 
+WHERE id NOT IN (
+    SELECT MIN(id) 
+    FROM Person 
+    GROUP BY email
+);
+
+❌ Why Does This Fail?
+MySQL does not allow modifying (DELETE) the same table that is being used in a FROM subquery (SELECT MIN(id) FROM Person).
+This results in the error:
+You can't specify target table 'Person' for update in FROM clause.
+
